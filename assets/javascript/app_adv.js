@@ -18,6 +18,7 @@ var ctd_timer;
 //display of data
 fn_datadisplay();
 
+//timeleft=60;
 //start timer for countdown
 fn_countdown();
 
@@ -30,6 +31,13 @@ $(document).on("click", ".btn", function() {
       frequency: $("#frequency").val(),
       dateAdded: firebase.database.ServerValue.TIMESTAMP
   });
+
+  //empties the form data
+  $("#train_name").val("");
+  $("#destination").val("");
+  $("#first_train_time").val("");
+  $("#frequency").val("");
+
   //starts the countdown again, empties the table body and load fresh data to it
   clearInterval(ctd_timer);
   fn_countdown();
@@ -103,8 +111,11 @@ function fn_datadisplay(){
               tdminsTillTrain.text(tMinutesTillTrain);
 
               var tdDel = $("<button>");
-              tdDel.text("X");
+              //tdDel.text("X");
+              tdDel.html("<i class='fa fa-trash' aria-hidden='true'></i> Trash")
               tdDel.addClass("to_del");
+              //setting train name to button attr value which is coming from snapshot val (from database)
+              tdDel.attr("tr_nm",childSnapshot.val().train_name);
 
               ////
 
@@ -141,13 +152,22 @@ function fn_countdown(){
 $(document.body).on("click", ".to_del",del);
 
 function del(){
- console.log("You clicked on: "+$(this).text());
- //console.log("Hello");
+ console.log("You clicked on: "+$(this).attr("tr_nm"));
+ //getting the handle of the node train details
+          var eventContactsRef = dataRef.ref('train_details');
+//getting that particular node where train name = name of the train in that node (getting from the button attr value)
+          var query = eventContactsRef.orderByChild('train_name').equalTo($(this).attr("tr_nm"));
+          query.on('child_added', function(snapshot) {
+              snapshot.ref.remove();
+          });
+          $("#test").empty();
+          clearInterval(ctd_timer);
+          fn_countdown();
+          fn_datadisplay();
+          $("#train_name").val("");
+          $("#destination").val("");
+          $("#first_train_time").val("");
+          $("#frequency").val("");
 
- dataRef.ref("/train_details").on("value",
-          function(childSnapshot) {
-            console.log(childSnapshot.val());
-            //childSnapshot.val().child("train_name").remove();
-            dataRef.ref("/train_details").child(key).remove();
-          })
 };
+
