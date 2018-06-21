@@ -58,3 +58,9 @@ input {
 #min_away{
     width: 10px;
 }
+#ctd{
+    margin-left: 535px;
+}
+th{
+    font-weight: bold;
+}
