@@ -154,9 +154,9 @@ $(document.body).on("click", ".to_del",del);
 function del(){
  console.log("You clicked on: "+$(this).attr("tr_nm"));
  //getting the handle of the node train details
-          var eventContactsRef = dataRef.ref('train_details');
+          var train_details_Ref = dataRef.ref('train_details');
 //getting that particular node where train name = name of the train in that node (getting from the button attr value)
-          var query = eventContactsRef.orderByChild('train_name').equalTo($(this).attr("tr_nm"));
+          var query = train_details_Ref.orderByChild('train_name').equalTo($(this).attr("tr_nm"));
           query.on('child_added', function(snapshot) {
               snapshot.ref.remove();
           });
